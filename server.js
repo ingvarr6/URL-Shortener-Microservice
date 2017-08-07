@@ -6,7 +6,8 @@
 'use strict';
 
 var express = require('express');
-var 
+var mongo = require('mongodb').MongoClient
+var url = 'mongodb://' + <dbuser> +':' + <dbpassword>+'@ds119548.mlab.com:19548/url_shortener'
 var app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
