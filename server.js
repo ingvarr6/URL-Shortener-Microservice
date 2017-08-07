@@ -7,7 +7,7 @@
 
 var express = require('express');
 var mongo = require('mongodb').MongoClient
-var url = 'mongodb://' + <dbuser> +':' + <dbpassword>+'@ds119548.mlab.com:19548/url_shortener'
+var url = 'mongodb://' + process.env.DB_USER +':' + process.env.DB_PASS + '@ds119548.mlab.com:19548/url_shortener';
 var app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -27,8 +27,12 @@ app.get('/new/:url*', function(req, res){
   validateUrl(req.params.url + req.params[0]) ? 
     validURL = req.params.url + req.params[0] :
   res.json(wrongURL)
-  
-  
+
+  mongo.connect(url, function(err, db) {
+    if (err) throw err;
+    var collection = db.collection('urls');
+    collection.insertOne({short_id: 2222, url: validURL})
+  })
   
   res.send(validURL);
 })
