@@ -6,6 +6,7 @@
 'use strict';
 
 var express = require('express');
+var 
 var app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -25,8 +26,6 @@ app.get('/new/:url*', function(req, res){
   validateUrl(req.params.url + req.params[0]) ? 
     validURL = req.params.url + req.params[0] :
   res.json(wrongURL)
-  
-  
   
   
   
