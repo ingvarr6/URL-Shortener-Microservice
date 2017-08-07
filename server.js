@@ -31,7 +31,7 @@ app.get('/new/:url*', function(req, res){
 
   //saveToDb(randId, validURL);
 
-  res.json({original_url: validURL, short_url: 'https://' + req.host + '/' + randId})
+  res.json({original_url: validURL, short_url: 'https://' + req.hostname + '/' + randId})
 })
 
 app.get('/:id', function(req, res){
@@ -41,6 +41,8 @@ app.get('/:id', function(req, res){
   // }else{
   //   res.json({"error":"This url is not on the database."});
   // }
+  console.log(getUrlFromDb('1111'))
+  res.send();
   
 })
 
@@ -52,8 +54,10 @@ function getUrlFromDb(id){
   mongo.connect(url, function(err, db) {
     if (err) throw err;
     var collection = db.collection('urls');
-    collection.find({
+    return collection.find({
       short_id: id
+    },{
+      url: 1
     })
   })
 }
