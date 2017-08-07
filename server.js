@@ -41,8 +41,9 @@ app.get('/:id', function(req, res){
     if (err) throw err;
     var collection = db.collection('urls');
     collection.find({
-      short_id: id
+      short_id: Number(id)
     }).toArray(function(err, data){
+      if (err) throw err;
       console.log(data);
       data.length != 0 ? res.redirect(data[0].url) : res.json({"error":"This url is not on the database."});
     })
