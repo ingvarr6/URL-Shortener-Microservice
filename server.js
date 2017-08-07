@@ -29,20 +29,25 @@ app.get('/new/:url*', function(req, res){
     validURL = req.params.url + req.params[0] :
   res.json(wrongURL)
 
-  //saveToDb(randId, validURL);
+  saveToDb(randId, validURL);
 
   res.json({original_url: validURL, short_url: 'https://' + req.hostname + '/' + randId})
 })
 
 app.get('/:id', function(req, res){
   var id = req.params.id;
-  // if (!isNaN(Number(id)) && id.length === 4){
-  //   res.send(req.params.id)
-  // }else{
-  //   res.json({"error":"This url is not on the database."});
-  // }
   
-  res.json(getUrlFromDb(id));
+  mongo.connect(url, function(err, db) {
+    if (err) throw err;
+    var collection = db.collection('urls');
+    collection.find({
+      short_id: id
+    }).toArray(function(err, data){
+      console.log(data);
+      data.length != 0 ? res.redirect(data[0].url) : res.json({"error":"This url is not on the database."});
+    })
+    db.close();
+  })
   
 })
 
@@ -50,23 +55,12 @@ function validateUrl(value) {
   return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
 }
 
-function getUrlFromDb(id){
-  mongo.connect(url, function(err, db) {
-    if (err) throw err;
-    var collection = db.collection('urls');
-    collection.find({
-      short_id: id
-    }).toArray(function(err, data){
-      return data.length != 0 ? data[0] : 'Not found'
-    })
-  })
-}
-
 function saveToDb(short_id, validURL){
     mongo.connect(url, function(err, db) {
     if (err) throw err;
     var collection = db.collection('urls');
     collection.insertOne({short_id: short_id, url: validURL})
+    db.close()
   })
 }
 
