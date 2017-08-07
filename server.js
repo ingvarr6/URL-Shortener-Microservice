@@ -41,7 +41,7 @@ app.get('/:id', function(req, res){
   // }else{
   //   res.json({"error":"This url is not on the database."});
   // }
-  console.log(getUrlFromDb('1111'))
+  getUrlFromDb('1111');
   res.send();
   
 })
@@ -54,10 +54,10 @@ function getUrlFromDb(id){
   mongo.connect(url, function(err, db) {
     if (err) throw err;
     var collection = db.collection('urls');
-    return collection.find({
+    collection.findOne({
       short_id: id
-    },{
-      url: 1
+    }).toArray(function(err, data){
+      console.log(data[0].url)
     })
   })
 }
