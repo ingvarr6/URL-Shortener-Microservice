@@ -21,7 +21,13 @@ app.route('/')
 //       res.send(req.params.url);
 // })
 
-app.get('/new:url', function(req, res))
+app.get('/new/:url*', function(req, res){
+  
+  var validURL = req.params.url.length == 0 ? res.json({error: 'Wrong url format, make s…protocol and real site.'}) : req.params[0].length == 0 ?
+      res.json({error: 'Wrong url format, make s…protocol and real site.'}): req.params[0];
+  
+  res.send(validURL);
+})
 
 app.listen(process.env.PORT, function () {
   console.log('Node.js listening ...');
