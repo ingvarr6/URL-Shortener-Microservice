@@ -29,10 +29,13 @@ app.get('/new/:url*', function(req, res){
     validURL = req.params.url + req.params[0] :
   res.json(wrongURL)
 
+  //saveToDb(randId, validURL);
 
-  saveToDb(randId, validURL);
-  
-  res.json({original_url: })
+  res.json({original_url: validURL, short_url: 'https://' + req.host + '/' + randId})
+})
+
+app.get('/:id', function(req, res){
+  res.send(req.params.id)
 })
 
 function validateUrl(value) {
